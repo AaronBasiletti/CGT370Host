@@ -98,7 +98,7 @@
 
 
     <!--D3 load-->
-    <script src="https://d3js.org/d3.v6.js"></script>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.js"></script>
 
   </head>
 
@@ -114,7 +114,7 @@
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="../index.html">Home</a>
             </li>
-            <li class="nav-item dropdown active">
+            <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 HW2
               </a>
@@ -126,28 +126,28 @@
                 <li><a class="dropdown-item" href="../HW2/Vis5.html">Vis 5</a></li>
               </ul>
             </li>
-            <li class="nav-item dropdown active">
+            <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 HW3
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item active" href="">Vis 1</a></li>
-                <li><a class="dropdown-item" href="Vis2.html">Vis 2</a></li>
-                <li><a class="dropdown-item" href="Vis3.html">Vis 3</a></li>
-                <li><a class="dropdown-item" href="Vis4.html">Vis 4</a></li>
+                <li><a class="dropdown-item" href="../HW3/Vis1.html">Vis 1</a></li>
+                <li><a class="dropdown-item" href="../HW3/Vis2.html">Vis 2</a></li>
+                <li><a class="dropdown-item" href="../HW3/Vis3.html">Vis 3</a></li>
+                <li><a class="dropdown-item" href="../HW3/Vis4.html">Vis 4</a></li>
               </ul>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown active">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 HW4
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../HW4/Vis1.html">Vis 1</a></li>
-                <li><a class="dropdown-item" href="../HW4/Vis2.html">Vis 2</a></li>
+                <li><a class="dropdown-item" href="Vis1.html">Vis 1</a></li>
+                <li><a class="dropdown-item active" href="">Vis 2</a></li>
               </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="../FinalProject.html">Final</a>
+            <li class="nav-item ">
+              <a class="nav-link " aria-current="page" href="../FinalProject.html">Final</a>
             </li>
           </ul>
         </div>
@@ -183,123 +183,114 @@
 
     <div class="col-lg-8 mx-auto p-4 py-md-5">
       <main>
-        <h1 class="text-body-emphasis">HW3</h1>
+        <h1 class="text-body-emphasis">HW4</h1>
 
         <hr class="col-3 col-md-2 mb-5">
-        <h2 class="text-body-emphasis">Visualization 1</h2>
+        <h2 class="text-body-emphasis">Visualization 2</h2>
         <br/>
 
         <div class="col-md-6">
-          <h3 class="text-body-emphasis">Interactive Scatterplot</h3>
-          <p>Lorem ipsum.</p>
+          <h3 class="text-body-emphasis">Scatterplot - Phone CPU Speed vs. Storage</h3>
+          <p>CPU speed (GHz) vs. Internal storage (GB). Data from <a href="https://www.kaggle.com/datasets/atefehmirnaseri/cell-phone-price">here.</a></p>
         </div>   
     </div>
 
     <!--D3 display div-->
-    <div class="container text-center">
-      <div class="col align-self-start">
+    <div class="container text-center" style="display: inline-block; margin: 10 auto;">
+      <div class="col align-center" >
         
-        <div id="my_dataviz"></div>
-
         <!--D3 script-->
-        <script>
+        <script type="text/javascript">
 
-          // set the dimensions and margins of the graph
-          const margin = {top: 10, right: 30, bottom: 30, left: 60},
-              width = 560 - margin.left - margin.right,
-              height = 500 - margin.top - margin.bottom;
-          
-          // append the svg object to the body of the page
-          const svg = d3.select("#my_dataviz")
-            .append("svg")
-              .attr("width", width + margin.left + margin.right)
-              .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-              .attr("transform",
-                    `translate(${margin.left}, ${margin.top})`);
-          
-          //Read the data
-          d3.csv("../data/happyscore_income.csv").then( function(data) {
-          
-            // Add X axis
-            const x = d3.scaleLinear()
-              .domain([1, 10])
-              .range([ 0, width ]);
-            svg.append("g")
-              .attr("transform", `translate(0, ${height})`)
-              .call(d3.axisBottom(x));
-          
-            // Add Y axis
-            const y = d3.scaleLinear()
-              .domain([0, 2650])
-              .range([ height, 0]);
-            svg.append("g")
-              .call(d3.axisLeft(y));
+          //Width and height
+            var w = 500;
+            var h = 300;
+            var padding = 30;
+            
+            var dataset = [
+                    [2.2, 7], [0.5, 53], [0.5, 41], [2.5, 10], [1.2, 44],
+                    [0.5, 22], [1.7, 10], [0.5, 24], [0.5, 53], [0.6, 9],
+                    [2.9, 9]
+                    ];
 
-            // Add X axis label:
-            svg.append("text")
-                .attr("text-anchor", "end")
-                .attr("x", width/2 + margin.left)
-                .attr("y", height + margin.top + 20)
-                .text("Average Satisfaction Rating");
+            //Create scale functions
+            var xScale = d3.scale.linear()
+                      .domain([0, d3.max(dataset, function(d) { return d[0]; })])
+                      .range([padding, w - padding * 2]);
 
-            // Y axis label:
-            svg.append("text")
-                .attr("text-anchor", "end")
-                .attr("transform", "rotate(-90)")
-                .attr("y", -margin.left + 20)
-                .attr("x", -margin.top - height/2 + 20)
-                .text("Average Income")
-          
-            // Color scale: give me a region name, I return a color
-            const color = d3.scaleOrdinal()
-              .domain(["''Central and Eastern Europe'", "''Western Europe'" ])
-              .range([ "#440154ff", "#21908dff"])
-          
-          
-            // Highlight the region that is hovered
-            const highlight = function(event,d){
-          
-              selected_region = d.region
-          
-              d3.selectAll(".dot")
-                .transition()
-                .duration(200)
-                .style("fill", "lightgrey")
-                .attr("r", 3)
-          
-              d3.selectAll("." + selected_region)
-                .transition()
-                .duration(200)
-                .style("fill", color(selected_region))
-                .attr("r", 7)
-            }
-          
-            // Highlight the region that is hovered
-            const doNotHighlight = function(event,d){
-              d3.selectAll(".dot")
-                .transition()
-                .duration(200)
-                .style("fill", d => color(d.region))
-                .attr("r", 5 )
-            }
-          
-            // Add dots
-            svg.append('g')
-              .selectAll("dot")
-              .data(data)
+            var yScale = d3.scale.linear()
+                      .domain([0, d3.max(dataset, function(d) { return d[1]; })])
+                      .range([h - padding, padding]);
+
+            var rScale = d3.scale.linear()
+                      .domain([0, d3.max(dataset, function(d) { return d[1]; })])
+                      .range([2, 5]);
+
+            //Define X axis
+            var xAxis = d3.svg.axis()
+                      .scale(xScale)
+                      .orient("bottom")
+                      .ticks(5);
+
+            //Define Y axis
+            var yAxis = d3.svg.axis()
+                      .scale(yScale)
+                      .orient("left")
+                      .ticks(5);
+
+            //Create SVG element
+            var svg = d3.select("body")
+                  .append("svg")
+                  .attr("width", w)
+                  .attr("height", h);
+
+            //Create circles
+            svg.selectAll("circle")
+              .data(dataset)
               .enter()
               .append("circle")
-                .attr("class", function (d) { return "dot " + d.region } )
-                .attr("cx", function (d) { return x(d.avg_satisfaction); } )
-                .attr("cy", function (d) { return y(d.avg_income); } )
-                .attr("r", 5)
-                .style("fill", function (d) { return color(d.region) } )
-              .on("mouseover", highlight)
-              .on("mouseleave", doNotHighlight )
-          
-          })
+              .attr("cx", function(d) {
+                  return xScale(d[0]);
+              })
+              .attr("cy", function(d) {
+                  return yScale(d[1]);
+              })
+              .attr("r", function(d) {
+                  return rScale(d[1]);
+              });
+
+            //Create labels
+            svg.selectAll("text")
+              .data(dataset)
+              .enter()
+              .append("text")
+              .text(function(d) {
+                  return d[0] + "," + d[1];
+              })
+              .attr("x", function(d) {
+                  return xScale(d[0]);
+              })
+              .attr("y", function(d) {
+                  return yScale(d[1]);
+              })
+              .attr("font-family", "sans-serif")
+              .attr("font-size", "11px")
+              .attr("fill", "green");
+            
+            //Create X axis
+            svg.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(0," + (h - padding) + ")")
+              .call(xAxis);
+            
+            //Create Y axis
+            svg.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(" + padding + ",0)")
+              .call(yAxis);
+            
         </script>
+
       </div>
     </div>
     
