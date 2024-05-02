@@ -190,8 +190,9 @@
         <br/>
 
         <div class="col-md-6">
-          <h3 class="text-body-emphasis">Interactive Scatterplot</h3>
-          <p>Lorem ipsum.</p>
+          <h3 class="text-body-emphasis">Interactive Scatterplot - Average Income (USD) vs. Average Satisfaction</h3>
+          <p>Measuring average income in USD versus average satisfaction on a scale of 1-10. <a href="">Source</a></p>
+          <p>Orange is Central and Eastern Europe. Green is Western Europe.</p>
         </div>   
     </div>
 
@@ -206,8 +207,8 @@
 
           // set the dimensions and margins of the graph
           const margin = {top: 10, right: 30, bottom: 30, left: 60},
-              width = 560 - margin.left - margin.right,
-              height = 500 - margin.top - margin.bottom;
+              width = 900 - margin.left - margin.right,
+              height = 700 - margin.top - margin.bottom;
           
           // append the svg object to the body of the page
           const svg = d3.select("#my_dataviz")
@@ -223,7 +224,7 @@
           
             // Add X axis
             const x = d3.scaleLinear()
-              .domain([1, 10])
+              .domain([0, 28000])
               .range([ 0, width ]);
             svg.append("g")
               .attr("transform", `translate(0, ${height})`)
@@ -231,7 +232,7 @@
           
             // Add Y axis
             const y = d3.scaleLinear()
-              .domain([0, 2650])
+              .domain([0, 10])
               .range([ height, 0]);
             svg.append("g")
               .call(d3.axisLeft(y));
@@ -240,21 +241,21 @@
             svg.append("text")
                 .attr("text-anchor", "end")
                 .attr("x", width/2 + margin.left)
-                .attr("y", height + margin.top + 20)
-                .text("Average Satisfaction Rating");
+                .attr("y", height + margin.top + 18)
+                .text("Average Income (USD)");
 
             // Y axis label:
             svg.append("text")
                 .attr("text-anchor", "end")
                 .attr("transform", "rotate(-90)")
-                .attr("y", -margin.left + 20)
+                .attr("y", -margin.left + 13)
                 .attr("x", -margin.top - height/2 + 20)
-                .text("Average Income")
+                .text("Average Satisfaction Rating")
           
             // Color scale: give me a region name, I return a color
             const color = d3.scaleOrdinal()
-              .domain(["''Central and Eastern Europe'", "''Western Europe'" ])
-              .range([ "#440154ff", "#21908dff"])
+              .domain(["'Central and Eastern Europe'", "'Western Europe'" ])
+              .range([ "#fb9607", "#174e37"])
           
           
             // Highlight the region that is hovered
@@ -291,8 +292,8 @@
               .enter()
               .append("circle")
                 .attr("class", function (d) { return "dot " + d.region } )
-                .attr("cx", function (d) { return x(d.avg_satisfaction); } )
-                .attr("cy", function (d) { return y(d.avg_income); } )
+                .attr("cx", function (d) { return x(d.avg_income); } )
+                .attr("cy", function (d) { return y(d.avg_satisfaction); } )
                 .attr("r", 5)
                 .style("fill", function (d) { return color(d.region) } )
               .on("mouseover", highlight)

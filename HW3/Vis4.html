@@ -98,7 +98,7 @@
 
 
     <!--D3 Prep-->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3.v6.js"></script>
 
   </head>
 
@@ -190,8 +190,8 @@
         <br/>
 
         <div class="col-md-6">
-          <h3 class="text-body-emphasis">Manipulable Chart</h3>
-          <p>Lorem ipsum.</p>
+          <h3 class="text-body-emphasis">Two-Variable Lollipop Chart - GPU Counts per Brand, Chipmaker</h3>
+          <p>Number of GPU SKUs sold by the three brands that produce both NVIDIA and AMD cards. Data gathered from <a href="https://pcpartpicker.com/products/video-card/">PCPartPicker</a>.</p>
         </div>   
     </div>
 
@@ -199,6 +199,94 @@
     <div class="container text-center">
       <div class="col align-self-start">
         
+        <!-- Add 2 buttons -->
+        <button onclick="update('NVIDIA')">NVIDIA</button>
+        <button onclick="update('AMD')">AMD</button>
+
+        <!-- Create a div where the graph will take place -->
+        <div id="my_dataviz"></div>
+
+        <script>
+
+          // set the dimensions and margins of the graph
+          const margin = {top: 30, right: 30, bottom: 70, left: 60},
+              width = 700 - margin.left - margin.right,
+              height = 600 - margin.top - margin.bottom;
+          
+          // append the svg object to the body of the page
+          const svg = d3.select("#my_dataviz")
+            .append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+              .attr("transform", `translate(${margin.left}, ${margin.top})`);
+          
+          // Initialize the X axis
+          const x = d3.scaleBand()
+            .range([ 0, width ])
+            .padding(1);
+          const xAxis = svg.append("g")
+            .attr("transform", `translate(0, ${height})`)
+          
+          // Initialize the Y axis
+          const y = d3.scaleLinear()
+            .range([ height, 0]);
+          const yAxis = svg.append("g")
+            .attr("class", "myYaxis")
+          
+          
+          // A function that create / update the plot for a given variable:
+          function update(selectedVar) {
+          
+            // Parse the Data
+            d3.csv("../data/gpu_count.csv").then( function(data) {
+          
+              // X axis
+              x.domain(data.map(function(d) { return d.brand; }))
+              xAxis.transition().duration(1000).call(d3.axisBottom(x))
+          
+              // Add Y axis
+              y.domain([0, d3.max(data, function(d) { return +d[selectedVar] }) ]);
+              yAxis.transition().duration(1000).call(d3.axisLeft(y));
+          
+              // variable u: map data to existing circle
+              const j = svg.selectAll(".myLine")
+                .data(data)
+              // update lines
+              j
+                .join("line")
+                .attr("class", "myLine")
+                .transition()
+                .duration(1000)
+                  .attr("x1", function(d) { return x(d.brand); })
+                  .attr("x2", function(d) { return x(d.brand); })
+                  .attr("y1", y(0))
+                  .attr("y2", function(d) { return y(d[selectedVar]); })
+                  .attr("stroke", "grey")
+          
+          
+              // variable u: map data to existing circle
+              const u = svg.selectAll("circle")
+                .data(data)
+              // update bars
+              u
+                .join("circle")
+                .transition()
+                .duration(1000)
+                  .attr("cx", function(d) { return x(d.brand); })
+                  .attr("cy", function(d) { return y(d[selectedVar]); })
+                  .attr("r", 8)
+                  .attr("fill", "#69b3a2");
+          
+          
+            })
+          
+          }
+          
+          // Initialize plot
+          update('NVIDIA')
+        </script>
+
       </div>
     </div>
     

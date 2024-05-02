@@ -94,12 +94,18 @@
       .bd-mode-toggle .dropdown-menu .active .bi {
         display: block !important;
       }
+
+      .circle:hover{
+        stroke: black;
+        stroke-width: 4px;
+      }
+
     </style>
 
 
     <!--D3 Prep-->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-
+    <script src="https://d3js.org/d3.v6.js"></script>
+    
   </head>
 
   <body>
@@ -190,15 +196,111 @@
         <br/>
 
         <div class="col-md-6">
-          <h3 class="text-body-emphasis">Manipulable Chart</h3>
-          <p>Lorem ipsum.</p>
+          <h3 class="text-body-emphasis">Bubblemap - French National Parks</h3>
+          <p>Locational data of the 8 domestic national parks of France. Data from <a href="https://en.wikipedia.org/wiki/List_of_national_parks_of_France">Wikipedia</a> and Google Maps.</p>
         </div>   
     </div>
 
     <!--D3 display div-->
     <div class="container text-center">
       <div class="col align-self-start">
-        
+
+        <div id="my_dataviz"></div>
+
+        <script>
+
+          // set width and height of svg
+          const width = 460
+          const height = 400
+          
+          // The svg
+          const svg = d3.select("#my_dataviz")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+          
+          // Map and projection
+          const projection = d3.geoMercator()
+              .center([4, 47])                // GPS of location to zoom on
+              .scale(1020)                       // This is like the zoom
+              .translate([ width/2, height/2 ])
+          
+          // Create data for circles:
+          const markers = [
+            {long: 5.442, lat: 43.218, name: "Calanques National Park"}, 
+            {long: 3.593, lat: 44.323, name: "Cévennes National Park"}, 
+            {long: 6.262, lat: 44.839, name: "Écrins National Park"}, 
+            {long: 5.007, lat: 47.949, name: "Forêts National Park"},  
+            {long: 7.094, lat: 44.131, name: "Mercantour National Park"}, 
+            {long: 6.385, lat: 43.074, name: "Port-Cros National Park"}, 
+            {long: -0.083, lat: 42.872, name: "Pyrénées National Park"}, 
+            {long: 6.916, lat: 45.336, name: "Vanoise National Park"}, 
+          ];
+          
+          // Load external data and boot
+          d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then( function(data){
+          
+              // Filter data
+              data.features = data.features.filter( d => d.properties.name=="France")
+          
+              // Draw the map
+              svg.append("g")
+                  .selectAll("path")
+                  .data(data.features)
+                  .join("path")
+                    .attr("fill", "#b8b8b8")
+                    .attr("d", d3.geoPath()
+                        .projection(projection)
+                    )
+                  .style("stroke", "black")
+                  .style("opacity", .3)
+          
+              // create a tooltip
+              const Tooltip = d3.select("#my_dataviz")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 1)
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "2px")
+                .style("border-radius", "5px")
+                .style("padding", "5px")
+          
+              // Three function that change the tooltip when user hover / move / leave a cell
+              const mouseover = function(event, d) {
+                Tooltip.style("opacity", 1)
+              }
+              var mousemove = function(event, d) {
+                Tooltip
+                  .html(d.name + "<br>" + "long: " + d.long + "<br>" + "lat: " + d.lat)
+                  .style("left", (event.x)/2 + "px")
+                  .style("top", (event.y)/2 - 30 + "px")
+              }
+              var mouseleave = function(event, d) {
+                Tooltip.style("opacity", 0)
+              }
+          
+              // Add circles:
+              svg
+                .selectAll("myCircles")
+                .data(markers)
+                .join("circle")
+                  .attr("cx", d => projection([d.long, d.lat])[0])
+                  .attr("cy", d => projection([d.long, d.lat])[1])
+                  .attr("r", 14)
+                  .attr("class", "circle")
+                  .style("fill", "69b3a2")
+                  .attr("stroke", "#69b3a2")
+                  .attr("stroke-width", 3)
+                  .attr("fill-opacity", .4)
+                .on("mouseover", mouseover)
+                .on("mousemove", mousemove)
+                .on("mouseleave", mouseleave)
+          
+          })
+          
+          </script>
+
       </div>
     </div>
     
